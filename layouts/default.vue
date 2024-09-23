@@ -1,40 +1,24 @@
 <template>
-  <div>
-    <nav>
-      <nuxt-link to="/">Home</nuxt-link>
-      <nuxt-link v-if="!$auth.loggedIn" to="/login">Login</nuxt-link>
-      <nuxt-link v-if="!$auth.loggedIn" to="/register">Register</nuxt-link>
-      <nuxt-link v-if="$auth.loggedIn" to="/dashboard">Dashboard</nuxt-link>
-    </nav>
-    <nuxt />
-  </div>
+  <v-app>
+    <v-app-bar app>
+      <v-toolbar-title>Nuxt Auth Sample</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn text to="/">Home</v-btn>
+      <v-btn v-if="!$auth.loggedIn" text to="/login">Login</v-btn>
+      <v-btn v-if="!$auth.loggedIn" text to="/register">Register</v-btn>
+      <v-btn v-if="$auth.loggedIn" text to="/dashboard">Dashboard</v-btn>
+    </v-app-bar>
+
+    <v-main>
+      <v-container>
+        <nuxt />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
 export default {
   name: 'DefaultLayout',
-  data () {
-    return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
-    }
-  }
 }
 </script>
