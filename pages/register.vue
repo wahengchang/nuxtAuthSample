@@ -4,27 +4,26 @@
     <form @submit.prevent="register">
       <div>
         <label for="email">Email:</label>
-        <input id="email" v-model="email" type="email" required>
+        <input type="email" id="email" v-model="email" required>
       </div>
       <div>
         <label for="password">Password:</label>
-        <input id="password" v-model="password" type="password" required>
+        <input type="password" id="password" v-model="password" required>
       </div>
       <button type="submit">Register</button>
     </form>
     <p v-if="error">{{ error }}</p>
-    <p v-if="success">{{ success }}</p>
   </div>
 </template>
 
 <script>
 export default {
+  auth: 'guest',
   data() {
     return {
       email: '',
       password: '',
-      error: null,
-      success: null
+      error: null
     }
   },
   methods: {
@@ -34,11 +33,15 @@ export default {
           email: this.email,
           password: this.password
         })
-        this.success = 'Registration successful. Please login.'
-        this.error = null
+        await this.$auth.loginWith('local', {
+          data: {
+            email: this.email,
+            password: this.password
+          }
+        })
+        this.$router.push('/dashboard')
       } catch (e) {
-        this.error = e.response.data.error
-        this.success = null
+        this.error = e.response?.data?.message || 'An error occurred'
       }
     }
   }

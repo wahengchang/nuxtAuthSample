@@ -38,7 +38,7 @@ export default {
     // Modules: https://go.nuxtjs.dev/config-modules
     modules: [
         '@nuxtjs/axios',
-        '@nuxtjs/auth'
+        '@nuxtjs/auth-next'
     ],
 
     // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -66,13 +66,21 @@ export default {
     auth: {
         strategies: {
             local: {
-                endpoints: {
-                    login: { url: '/api/auth/login', method: 'post', propertyName: 'token' },
-                    logout: { url: '/api/auth/logout', method: 'post' },
-                    user: { url: '/api/auth/user', method: 'get', propertyName: 'user' }
+                token: {
+                    property: 'token',
+                    global: true,
+                    required: true,
+                    type: 'Bearer'
                 },
-                tokenRequired: true,
-                tokenType: 'Bearer'
+                user: {
+                    property: 'user',
+                    autoFetch: true
+                },
+                endpoints: {
+                    login: { url: '/api/auth/login', method: 'post' },
+                    logout: { url: '/api/auth/logout', method: 'post' },
+                    user: { url: '/api/auth/user', method: 'get' }
+                }
             }
         },
         redirect: {
@@ -84,7 +92,7 @@ export default {
     },
 
     axios: {
-        baseURL: 'http://localhost:3000'
+        baseURL: process.env.API_URL || 'http://localhost:3000'
     },
 
     serverMiddleware: [
@@ -95,5 +103,9 @@ export default {
     env: {
         MONGODB_URI: process.env.MONGODB_URI,
         JWT_SECRET: process.env.JWT_SECRET
+    },
+
+    router: {
+        middleware: ['auth']
     }
 }
