@@ -88,3 +88,32 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# Ignore environment variable files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore log files
+*.log
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore coverage reports
+coverage/
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+
+# Ignore test output files
+tests_output/
+*.test.json
+*.test.xml

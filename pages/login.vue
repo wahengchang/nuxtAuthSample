@@ -3,8 +3,8 @@
     <h1>Login</h1>
     <form @submit.prevent="login">
       <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" required>
+        <label for="username">Username:</label>
+        <input type="text" id="username" v-model="username" required>
       </div>
       <div>
         <label for="password">Password:</label>
@@ -21,7 +21,7 @@ export default {
   auth: 'guest',
   data() {
     return {
-      email: '',
+      username: '',
       password: '',
       error: null
     }
@@ -31,7 +31,7 @@ export default {
       try {
         await this.$auth.loginWith('local', {
           data: {
-            email: this.email,
+            username: this.username,
             password: this.password
           }
         })

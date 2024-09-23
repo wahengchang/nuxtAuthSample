@@ -3,6 +3,10 @@
     <h1>Register</h1>
     <form @submit.prevent="register">
       <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" v-model="username" required>
+      </div>
+      <div>
         <label for="email">Email:</label>
         <input type="email" id="email" v-model="email" required>
       </div>
@@ -21,6 +25,7 @@ export default {
   auth: 'guest',
   data() {
     return {
+      username: '',
       email: '',
       password: '',
       error: null
@@ -30,12 +35,13 @@ export default {
     async register() {
       try {
         await this.$axios.post('/api/auth/register', {
+          username: this.username,
           email: this.email,
           password: this.password
         })
         await this.$auth.loginWith('local', {
           data: {
-            email: this.email,
+            username: this.username,
             password: this.password
           }
         })
