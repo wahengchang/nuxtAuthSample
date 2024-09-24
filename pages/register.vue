@@ -1,48 +1,44 @@
 <template>
-  <div>
-    <h1>Register</h1>
-    <form @submit.prevent="register">
-      <div>
-        <label for="username">Username:</label>
-        <input type="text" id="username" v-model="username" required>
-      </div>
-      <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" required>
-      </div>
-      <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" required>
-      </div>
-      <button type="submit">Register</button>
-    </form>
-    <p v-if="error">{{ error }}</p>
-  </div>
+  <AuthForm
+    title="Prompt Template"
+    subtitle="Register for Prompt Template"
+    :fields="fields"
+    submitButtonId="register-button"
+    submitButtonText="Register"
+    linkText="Already have an account?"
+    linkRoute="/login"
+    linkActionText="Login here"
+    :error="error"
+    @submit="register"
+  />
 </template>
 
 <script>
+import AuthForm from '~/components/AuthForm.vue'
+
 export default {
+  components: {
+    AuthForm,
+  },
   auth: 'guest',
   data() {
     return {
-      username: '',
-      email: '',
-      password: '',
-      error: null
+      fields: [
+        { id: 'register-username', name: 'username', label: 'Username', type: 'text' },
+        { id: 'register-email', name: 'email', label: 'Email', type: 'email' },
+        { id: 'register-password', name: 'password', label: 'Password', type: 'password' },
+      ],
+      error: null,
     }
   },
   methods: {
-    async register() {
+    async register(formData) {
       try {
-        await this.$axios.post('/api/auth/register', {
-          username: this.username,
-          email: this.email,
-          password: this.password
-        })
+        await this.$axios.post('/api/auth/register', formData)
         await this.$auth.loginWith('local', {
           data: {
-            username: this.username,
-            password: this.password
+            username: formData.username,
+            password: formData.password
           }
         })
         this.$router.push('/dashboard')

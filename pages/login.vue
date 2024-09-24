@@ -1,39 +1,52 @@
 <template>
-  <div>
-    <h1>Login</h1>
-    <form @submit.prevent="login">
-      <div>
-        <label for="username">Username:</label>
-        <input type="text" id="username" v-model="username" required>
+  <AuthForm
+    title="Prompt Template"
+    subtitle="Login to Prompt Template"
+    :fields="fields"
+    submitButtonId="login-button"
+    submitButtonText="Login and continue"
+    linkText="Don't have an account?"
+    linkRoute="/register"
+    linkActionText="Register here"
+    :error="error"
+    @submit="login"
+  >
+    <template #extra-fields>
+      <div class="form-footer">
+        <div class="checkbox-container">
+          <input type="checkbox" id="rememberMe" v-model="rememberMe">
+          <label for="rememberMe">Remember me</label>
+        </div>
+        <router-link :to="`/forget`" class="text-primary text-decoration-none">
+          <small>Forgot Password?</small>
+        </router-link>
       </div>
-      <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" required>
-      </div>
-      <button type="submit">Login</button>
-    </form>
-    <p v-if="error">{{ error }}</p>
-  </div>
+    </template>
+  </AuthForm>
 </template>
 
 <script>
+import AuthForm from '~/components/AuthForm.vue'
+
 export default {
-  auth: 'guest',
+  components: {
+    AuthForm,
+  },
   data() {
     return {
-      username: '',
-      password: '',
-      error: null
+      fields: [
+        { id: 'login-username', name: 'username', label: 'Username', type: 'text' },
+        { id: 'login-password', name: 'password', label: 'Password', type: 'password' },
+      ],
+      rememberMe: false,
+      error: null,
     }
   },
   methods: {
-    async login() {
+    async login(formData) {
       try {
         await this.$auth.loginWith('local', {
-          data: {
-            username: this.username,
-            password: this.password
-          }
+          data: formData
         })
         this.$router.push('/dashboard')
       } catch (e) {
@@ -43,3 +56,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+</style>

@@ -1,4 +1,6 @@
-// Ref: https://github.com/nuxt-community/vuetify-module#customvariables
-//
-// The variables you want to modify
-// $font-size-root: 20px;
+// Override Vuetify SASS variables
+$font-size-root: 16px;
+$body-font-family: 'Roboto',
+sans-serif;
+// Optionally, override specific text styles
+$headings: ( 'h1': ( 'size': 1.25rem, 'weight': 400, 'line-height': 1.2, 'letter-spacing': -0.01562em, ), 'body-1': ( 'size': 1.0rem, 'weight': 400, 'line-height': 1.5, 'letter-spacing': 0.00937em, ), );
