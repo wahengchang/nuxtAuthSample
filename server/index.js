@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const authRoutes = require('./routes/auth')
+const collectionsRoutes = require('./routes/collections')
 
 const app = express()
 
@@ -15,5 +16,8 @@ app.use(bodyParser.json())
 
 // Use auth routes
 app.use('/api/auth', authRoutes)
+
+// Add collections routes
+app.use('/api/collections', collectionsRoutes)
 
 module.exports = app

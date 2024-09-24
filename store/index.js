@@ -1,22 +1,57 @@
 export const state = () => ({
-    // Define your state properties here
-    user: null
+    collections: [],
+    currentCollection: null,
+    currentItems: []
 })
 
 export const mutations = {
-    // Define your mutations here
-    setUser(state, user) {
-        state.user = user
+    SET_COLLECTIONS(state, collections) {
+        state.collections = collections
+    },
+    SET_CURRENT_COLLECTION(state, collection) {
+        state.currentCollection = collection
+    },
+    SET_CURRENT_ITEMS(state, items) {
+        state.currentItems = items
     }
 }
 
 export const actions = {
-    // Define your actions here
-    async nuxtServerInit({ commit }, { req }) {
-        // Initialize your store with server-side data if needed
+    async fetchCollections({ commit }) {
+        const collections = await this.$axios.$get('/api/collections')
+        commit('SET_COLLECTIONS', collections)
     },
-    setUser({ commit }, user) {
-        commit('setUser', user)
+    async fetchCollection({ commit }, id) {
+        const collection = await this.$axios.$get(`/api/collections/${id}`)
+        commit('SET_CURRENT_COLLECTION', collection)
+    },
+    async fetchItems({ commit }, collectionId) {
+        const items = await this.$axios.$get(`/api/collections/${collectionId}/items`)
+        commit('SET_CURRENT_ITEMS', items)
+    },
+    async createCollection({ dispatch }, collection) {
+        await this.$axios.$post('/api/collections', collection)
+        dispatch('fetchCollections')
+    },
+    async updateCollection({ dispatch }, { id, collection }) {
+        await this.$axios.$put(`/api/collections/${id}`, collection)
+        dispatch('fetchCollections')
+    },
+    async deleteCollection({ dispatch }, id) {
+        await this.$axios.$delete(`/api/collections/${id}`)
+        dispatch('fetchCollections')
+    },
+    async createItem({ dispatch }, { collectionId, item }) {
+        await this.$axios.$post(`/api/collections/${collectionId}/items`, item)
+        dispatch('fetchItems', collectionId)
+    },
+    async updateItem({ dispatch }, { collectionId, itemId, item }) {
+        await this.$axios.$put(`/api/collections/${collectionId}/items/${itemId}`, item)
+        dispatch('fetchItems', collectionId)
+    },
+    async deleteItem({ dispatch }, { collectionId, itemId }) {
+        await this.$axios.$delete(`/api/collections/${collectionId}/items/${itemId}`)
+        dispatch('fetchItems', collectionId)
     }
 }
 
