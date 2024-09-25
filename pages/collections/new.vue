@@ -3,7 +3,12 @@
     <h1 class="collection-title">Create New Collection</h1>
     <div class="collection-card">
       <h2>Add Your Collection Details</h2>
-      <CollectionForm />
+      <CollectionForm
+        :collection="newCollection"
+        submit-button-text="Create Collection"
+        @submit="createCollection"
+        @cancel="goBack"
+      />
     </div>
   </div>
 </template>
@@ -14,6 +19,33 @@ import CollectionForm from '~/components/CollectionForm.vue'
 export default {
   components: {
     CollectionForm
+  },
+  data() {
+    return {
+      newCollection: {
+        name: '',
+        description: '',
+        category: '',
+        tags: [],
+        privacy: 'public',
+        customFields: []
+      }
+    }
+  },
+  methods: {
+    async createCollection(formData) {
+      try {
+        const newCollection = await this.$axios.$post('/api/collections', formData)
+        this.$toast.success('Collection created successfully', { duration: 3000 })
+        this.$router.push('/collections')
+      } catch (error) {
+        console.error('Error creating collection:', error)
+        this.$toast.error('Failed to create collection')
+      }
+    },
+    goBack() {
+      this.$router.push('/collections')
+    }
   }
 }
 </script>

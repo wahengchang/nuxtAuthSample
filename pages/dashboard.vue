@@ -4,7 +4,7 @@
     <p>Welcome, {{ user.email }}</p>
     <nuxt-link to="/collections" class="collections-link">Go to Collections</nuxt-link>
     <button @click="logout" id="logoutButton">Logout</button>
-    <button @click="deleteUser" id="deleteUserButton">Delete User</button>
+    <button @click="deleteUser" id="delete-account-button">Delete User</button>
   </div>
 </template>
 

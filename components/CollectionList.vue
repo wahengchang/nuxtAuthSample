@@ -131,7 +131,7 @@ export default {
       return new Date(date).toLocaleDateString()
     },
     editCollection(id) {
-      this.$router.push(`/collections/${id}/edit`)
+      this.$router.push(`/collections/${id}`)
     },
     async deleteCollection(id) {
       try {

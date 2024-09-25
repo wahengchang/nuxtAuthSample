@@ -1,173 +1,127 @@
 <template>
-  <form @submit.prevent="submitForm" class="collection-form">
-    <v-text-field
-      id="name"
-      v-model="collection.name"
-      label="Collection Name"
-      required
-      filled
-      dense
-      solo
-      class="collection-form-input"
-    ></v-text-field>
-
-    <v-textarea
-      id="description"
-      v-model="collection.description"
-      label="Description"
-      filled
-      dense
-      solo
-      class="collection-form-input"
-    ></v-textarea>
-
-    <div class="fields-section">
-      <h3>Fields</h3>
-      <div v-for="(field, index) in collection.fields" :key="index" class="field-item">
-        <v-text-field
-          v-model="field.name"
-          label="Field name"
-          required
-          filled
-          dense
-          solo
-          class="collection-form-input field-name"
-        ></v-text-field>
-
-        <v-select
-          v-model="field.type"
-          :items="fieldTypes"
-          label="Field type"
-          filled
-          dense
-          solo
-          class="collection-form-input field-type"
-        ></v-select>
-
-        <v-checkbox
-          v-model="field.required"
-          label="Required"
-          class="field-required"
-        ></v-checkbox>
-
-        <v-btn @click.prevent="removeField(index)" icon color="error">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </div>
-      <v-btn @click.prevent="addField" color="secondary" text>
-        <v-icon left>mdi-plus</v-icon>
+    <v-form ref="form" v-model="isFormValid" @submit.prevent="submitForm">
+      <v-text-field
+        v-model="formData.name"
+        label="Collection Name"
+        id="collection-name"
+      ></v-text-field>
+  
+      <v-textarea
+        v-model="formData.description"
+        label="Description"
+        id="collection-description"
+      ></v-textarea>
+  
+      <v-switch
+        v-model="formData.isPublic"
+        label="Public Collection"
+        id="collection-isPublic"
+      ></v-switch>
+      <v-row v-for="(field, index) in formData.fields" :key="index" class="mb-4">
+        <v-col cols="5">
+          <v-text-field
+            v-model="field.name"
+            label="Field Name"
+            :id="'field-name-' + index"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="3">
+          <v-select
+            v-model="field.type"
+            :items="fieldTypes"
+            item-text="label"
+            item-value="value"
+            label="Field Type"
+            :id="'field-type-' + index"
+          >
+            <template v-slot:selection="{ item }">
+              <v-icon v-if="item.icon" left>{{ item.icon }}</v-icon>
+              {{ item.label }}
+            </template>
+            <template v-slot:item="{ item }">
+              <v-icon v-if="item.icon" left>{{ item.icon }}</v-icon>
+              {{ item.label }}
+            </template>
+          </v-select>
+        </v-col>
+        <v-col cols="3">
+          <v-switch
+            v-model="field.required"
+            label="Required"
+          ></v-switch>
+        </v-col>
+        <v-col cols="1">
+          <v-btn @click="removeField(index)" color="error" icon>
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+  
+      <v-btn @click="addField" color="secondary" class="mb-4" id="add-field">
         Add Field
       </v-btn>
-    </div>
+  
+      <v-btn
+        id="submit-collection"
+        type="submit"
+        color="primary"
+        :disabled="!isFormValid"
+      >
+        {{ submitButtonText }}
+      </v-btn>
+  
+      <v-btn @click="cancel" text>
+        Cancel
+      </v-btn>
+    </v-form>
+  </template>
+  
+  <script>
+  import { fieldTypes } from '~/utils/fieldTypes'
 
-    <v-checkbox
-      id="isPublic"
-      v-model="collection.isPublic"
-      label="Make this collection public"
-      class="collection-form-input"
-    ></v-checkbox>
-
-    <v-btn type="submit" color="primary" block class="collection-button">
-      {{ isEdit ? 'Update' : 'Create' }} Collection
-    </v-btn>
-  </form>
-</template>
-
-<script>
-export default {
-  props: {
-    isEdit: {
-      type: Boolean,
-      default: false
+  export default {
+    name: 'CollectionForm',
+    props: {
+      collection: {
+        type: Object,
+        default: () => ({
+          name: '',
+          description: '',
+          isPublic: false,
+          fields: []
+        })
+      },
+      submitButtonText: {
+        type: String,
+        default: 'Save'
+      }
     },
-    initialCollection: {
-      type: Object,
-      default: () => ({
-        name: '',
-        description: '',
-        fields: [],
-        isPublic: false
-      })
-    }
-  },
-  data() {
-    return {
-      collection: { ...this.initialCollection },
-      fieldTypes: [
-        { text: 'Text', value: 'text' },
-        { text: 'Number', value: 'number' },
-        { text: 'Date', value: 'date' },
-        { text: 'Relation', value: 'relation' }
-      ]
-    }
-  },
-  methods: {
-    addField() {
-      this.collection.fields.push({ name: '', type: 'text', required: false })
+    data() {
+        console.log(this.collection)
+      return {
+        formData: { ...this.collection },
+        isFormValid: true,
+        fieldTypes
+      }
     },
-    removeField(index) {
-      this.collection.fields.splice(index, 1)
-    },
-    async submitForm() {
-      try {
-        if (this.isEdit) {
-          await this.$axios.put(`/api/collections/${this.collection._id}`, this.collection)
-        } else {
-          await this.$axios.post('/api/collections', this.collection)
+    methods: {
+      addField() {
+        if (!this.formData.fields) {
+          this.formData = { ...this.formData, fields: [] }
         }
-        this.$router.push('/collections')
-      } catch (error) {
-        console.error('Error submitting form:', error)
+        this.formData.fields.push({ name: '', type: '', required: false })
+      },
+      removeField(index) {
+        this.formData.fields.splice(index, 1)
+      },
+      async submitForm() {
+        if (this.$refs.form) {
+          this.$emit('submit', this.formData)
+        }
+      },
+      cancel() {
+        this.$emit('cancel')
       }
     }
   }
-}
-</script>
-
-<style scoped>
-.collection-form {
-  display: flex;
-  flex-direction: column;
-  margin-top: 30px;
-}
-
-.collection-form-input {
-  margin-bottom: 15px;
-}
-
-.collection-button {
-  margin-top: 20px;
-}
-
-.fields-section {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.fields-section h3 {
-  font-size: 16px;
-  font-weight: 400;
-  margin-bottom: 10px;
-}
-
-.field-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.field-name {
-  flex-grow: 2;
-  margin-right: 10px;
-}
-
-.field-type {
-  flex-grow: 1;
-  margin-right: 10px;
-}
-
-.field-required {
-  margin-right: 10px;
-}
-</style>
+  </script>

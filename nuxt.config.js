@@ -38,7 +38,8 @@ export default {
     // Modules: https://go.nuxtjs.dev/config-modules
     modules: [
         '@nuxtjs/axios',
-        '@nuxtjs/auth-next'
+        '@nuxtjs/auth-next',
+        '@nuxtjs/toast'
     ],
 
     // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -107,5 +108,9 @@ export default {
 
     router: {
         middleware: ['auth']
+    },
+
+    toast: {
+        position: 'top-center',
     }
 }
