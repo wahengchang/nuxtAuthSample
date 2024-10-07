@@ -93,12 +93,16 @@ export default {
     },
 
     axios: {
-        baseURL: process.env.API_URL || 'http://localhost:3000'
+        baseURL: process.env.HOST || 'http://localhost:3000'
     },
 
     serverMiddleware: [
         '~/server/index.js'
     ],
+    server: {
+        host: '0', // default: localhost,
+        port: process.env.PORT || 3000
+    },
 
     // Add this section to load environment variables
     env: {
