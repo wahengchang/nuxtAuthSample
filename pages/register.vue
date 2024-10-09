@@ -20,6 +20,7 @@ export default {
   components: {
     AuthForm,
   },
+  layout: 'requiredLogout',
   auth: 'guest',
   data() {
     return {

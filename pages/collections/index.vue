@@ -26,10 +26,11 @@
 import CollectionList from '~/components/CollectionList.vue'
 
 export default {
+  middleware: 'auth',
+  layout: 'requiredLoginCms',
   components: {
     CollectionList
   },
-  middleware: 'auth' // Ensure only authenticated users can access this page
 }
 </script>
 

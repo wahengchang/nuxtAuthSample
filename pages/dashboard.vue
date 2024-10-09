@@ -1,52 +1,32 @@
 <template>
   <div>
     <h1>Dashboard</h1>
-    <p>Welcome, {{ user.email }}</p>
-    <nuxt-link to="/collections" class="collections-link">Go to Collections</nuxt-link>
-    <button @click="logout" id="logoutButton">Logout</button>
-    <button @click="deleteUser" id="delete-account-button">Delete User</button>
+    <p>Welcome, {{ $auth.user.email }}!</p>
+    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+      <a href="/collections" style="margin-bottom: 10px;">View Collections</a>
+      <button @click="logout" id="logoutButton" style="margin-bottom: 10px;">Logout</button>
+      <button @click="deleteUser" id="deleteUserButton">Delete User</button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   middleware: 'auth',
-  data() {
-    return {
-      user: this.$auth.user
-    }
-  },
+  layout: 'requiredLoginCms',
   methods: {
     async logout() {
       await this.$auth.logout()
-      this.$router.push('/login')
+      this.$router.push('/')
     },
     async deleteUser() {
       try {
-        await this.$axios.delete('/api/auth/user')
-        await this.$auth.logout()
-        this.$router.push('/login')
+        await this.$axios.delete(`/api/auth/user`)
+        window.location.reload()
       } catch (error) {
-        console.error('Error deleting user:', error)
+        console.error('Failed to delete user:', error)
       }
     }
   }
 }
 </script>
-
-<style scoped>
-.collections-link {
-  display: block;
-  margin-bottom: 10px;
-  color: #3498db;
-  text-decoration: none;
-}
-
-.collections-link:hover {
-  text-decoration: underline;
-}
-
-button {
-  margin-right: 10px;
-}
-</style>

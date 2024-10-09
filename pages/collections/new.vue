@@ -17,6 +17,8 @@
 import CollectionForm from '~/components/CollectionForm.vue'
 
 export default {
+  middleware: 'auth',
+  layout: 'requiredLoginCms',
   components: {
     CollectionForm
   },

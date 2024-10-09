@@ -2,11 +2,11 @@
   <AuthForm
     title="Prompt Template"
     subtitle="Login to Prompt Template"
-    :fields="FORM_FIELDS.LOGIN"
+    :fields="fields"
     submitButtonId="login-button"
     submitButtonText="Login and continue"
-    :linkText="linkText"
-    :linkRoute="ROUTES.REGISTER"
+    linkText="Don't have an account?"
+    linkRoute="/register"
     linkActionText="Register here"
     :error="error"
     @submit="login"
@@ -17,7 +17,7 @@
           <input type="checkbox" id="rememberMe" v-model="rememberMe">
           <label for="rememberMe">Remember me</label>
         </div>
-        <router-link :to="ROUTES.FORGET" class="text-primary text-decoration-none">
+        <router-link :to="`/forget`" class="text-primary text-decoration-none">
           <small>Forgot Password?</small>
         </router-link>
       </div>
@@ -27,33 +27,42 @@
 
 <script>
 import AuthForm from '~/components/AuthForm.vue'
-import { FORM_FIELDS, ROUTES } from '~/utils/constants'
-import { handleApiError } from '~/utils/helpers'
 
 export default {
   components: {
     AuthForm,
   },
-  layout: 'auth',
-  auth: 'guest',
+  layout: 'requiredLogout',
   data() {
     return {
-      FORM_FIELDS,
-      ROUTES,
+      fields: [
+        { id: 'login-username', name: 'username', label: 'Username', type: 'text' },
+        { id: 'login-password', name: 'password', label: 'Password', type: 'password' },
+      ],
       rememberMe: false,
       error: null,
-      linkText: "Don't have an account?"
     }
   },
   methods: {
     async login(formData) {
       try {
-        await this.$auth.loginWith('local', { data: formData })
-        this.$router.push(ROUTES.DASHBOARD)
+        await this.$auth.loginWith('local', {
+          data: formData
+        })
+        this.$router.push('/dashboard')
       } catch (e) {
-        this.error = handleApiError(e)
+        this.error = e.response?.data?.message || 'An error occurred'
       }
     }
   }
 }
 </script>
+
+<style scoped>
+.form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+</style>

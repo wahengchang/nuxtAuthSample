@@ -20,6 +20,7 @@
 
 <script>
 export default {
-  name: 'InspirePage'
+  name: 'InspirePage',
+  layout: 'public'
 }
 </script>
